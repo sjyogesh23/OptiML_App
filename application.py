@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import pickle
+import joblib
 import json
 import zipfile
 import tempfile
@@ -28,7 +28,7 @@ if uploaded_zip:
                 st.stop()
 
             if not model_files:
-                st.error("❌ trained_model.pkl not found in the ZIP file.")
+                st.error("❌ best_model.pkl not found in the ZIP file.")
                 st.stop()
 
             if not encoder_files:
@@ -42,11 +42,8 @@ if uploaded_zip:
             with open(json_path, "r") as f:
                 model_inputs = json.load(f)
 
-            with open(model_path, "rb") as f:
-                model = pickle.load(f)
-
-            with open(encoder_path, "rb") as f:
-                label_encoders = pickle.load(f)
+            model = joblib.load(model_path)
+            label_encoders = joblib.load(encoder_path)
 
             st.success("✅ Model package loaded successfully!")
 

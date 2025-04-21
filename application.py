@@ -7,7 +7,7 @@ import tempfile
 import os
 import glob
 
-st.set_page_config(page_title="OptiML Prediction App", layout="wide")
+st.set_page_config(page_title="OptiML Suite Prediction App", layout="wide")
 st.title("OptiML Suite - Prediction App")
 st.write("If you don't have a model package, please go to the [OptiML Suite](https://yogeshsj.vercel.app/) to create one.")
 

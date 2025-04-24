@@ -8,8 +8,8 @@ import os
 import glob
 
 st.set_page_config(page_title="OptiML Prediction App", layout="wide")
-st.title("OptiML - Prediction App")
-st.write("If you don't have a model package, please go to the [OptiML Suite](https://yogeshsj.vercel.app/) to create one.")
+st.title("OptiML Suite - Prediction App")
+#st.write("If you don't have a model package, please go to the [OptiML Suite](https://yogeshsj.vercel.app/) to create one.")
 
 uploaded_zip = st.file_uploader("Upload Model Package (.zip)", type="zip")
 
@@ -56,20 +56,23 @@ if uploaded_zip:
 
         st.subheader("Enter Inputs for Prediction")
 
+        cols = st.columns(2)  # Create two columns
         user_input = {}
 
-        for key, col_info in input_columns.items():
+        for idx, (key, col_info) in enumerate(input_columns.items()):
             name = col_info["variable_name"]
             vtype = col_info["variable_type"]
 
-            if vtype == "Numeric":
-                value = st.number_input(f"{name} (Numeric)", value=0.0)
-            elif vtype in ["Binary", "Categorical"]:
-                options = list(col_info["inputs"].values())
-                value = st.selectbox(f"{name} ({vtype})", options)
-            else:
-                value = st.text_input(f"{name} (Text)", value="")
-            user_input[name] = value
+            with cols[idx % 2]:  # Alternate between the two columns
+                if vtype == "Numeric":
+                    value = st.number_input(f"{name} (Numeric)", value=0.0)
+                elif vtype in ["Binary", "Categorical"]:
+                    options = list(col_info["inputs"].values())
+                    value = st.selectbox(f"{name} ({vtype})", options)
+                else:
+                    value = st.text_input(f"{name} (Text)", value="")
+
+                user_input[name] = value
 
         if st.button("Predict"):
             try:
@@ -85,6 +88,8 @@ if uploaded_zip:
 
                 prediction = model.predict(input_df)[0]
                 t_name = target_info["variable_name"]
+                if( target_info["variable_type"] == "Binary"):
+                    prediction = label_encoders[t_name].inverse_transform([prediction])[0]
                 st.success(f"{t_name.capitalize()}: **{prediction}**")
 
             except Exception as e:
